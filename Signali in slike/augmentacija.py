@@ -20,10 +20,10 @@ transform = A.Compose([
     A.RandomRotate90(p=0.5)
 ])
 
-kernel = np.array([[1,4,6,4,1], 
-                   [4,18,26,18,4], 
-                   [6,26,38,26,6], 
-                   [4,18,26,18,4], 
+kernel = np.array([[1,4,6,4,1],
+                   [4,18,26,18,4],
+                   [6,26,38,26,6],
+                   [4,18,26,18,4],
                    [1,4,6,4,1]]) / 256
 
 if __name__ == '__main__':
@@ -33,5 +33,4 @@ if __name__ == '__main__':
         transformed_image = trasnformed['image']
         if random.random() < 0.2:
             transformed_image = convolve(transformed_image, kernel)
-        print(np.max(transformed_image))
         plt.imsave('images/image_aug_{}.png'.format(i), transformed_image)
