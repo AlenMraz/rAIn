@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from math import *
+import csv
 
 def find_pixels(img):
     white_pixels = np.where(img == 1)
@@ -102,7 +103,11 @@ def paint_convex_hull(img):
         for pixel in convex_hull:
             new_img[pixel[0]][pixel[1]] = 1.0
     plt.imsave('output.png', new_img, cmap='gray')
-
+    write_to_csv(hulls)
+def write_to_csv(hulls):
+    with open('output.csv', mode='w') as file:
+        writer = csv.writer(file)
+        writer.writerow([point for convex_hull in hulls for point in convex_hull])
 if __name__ == '__main__':
     image = plt.imread('pn22.png').astype(np.float32)
     paint_convex_hull(image)
