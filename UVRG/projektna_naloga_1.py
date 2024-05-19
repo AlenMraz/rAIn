@@ -163,14 +163,16 @@ def dodajanje_tock(pts, p1, p2, p3, p4):
 
         max_scalar_product = -float("inf")
         max_point = None
-        for point in pts:
-            Vp = point - pts[current_triangle.vertices[0]]
-            scalar_product = np.dot(Vp, current_triangle.normal)
-            if scalar_product > max_scalar_product:
-                max_scalar_product = scalar_product
-                max_point = point
+        for i in range(0,len(pts)):
+            if i not in hull_vertex:
+                Vp = pts[i] - pts[current_triangle.vertices[0]]
+                scalar_product = np.dot(Vp, current_triangle.normal)
+                if scalar_product > max_scalar_product:
+                    max_scalar_product = scalar_product
+                    max_point = pts[i]
+        if max_point is None:
+            break
         max_point_index = np.where(pts==max_point)[0][0]
-
         # Če nobena točka ne da pozitivnega skalarnega produkta (trikotnik ne vidi nobene točke), smo s to iteracijo končali
         if max_scalar_product <= 0:
             continue
@@ -185,7 +187,6 @@ def dodajanje_tock(pts, p1, p2, p3, p4):
                 triangles_positive_scalar.append(cur_triangle)
         
         # 1. Z nobenim trikotnikom na skladu nismo dobili pozitivnega skalarnega produkta.
-        # print("triangles1:",triangles_positive_scalar)
         if not triangles_positive_scalar: 
             p1 = current_triangle.vertices[0]
             p2 = current_triangle.vertices[1]
@@ -239,86 +240,48 @@ def dodajanje_tock(pts, p1, p2, p3, p4):
     
         # 2. Vsaj en trikotnik na skladu nam je dal pozitiven skalarni produkt. 
         else:  
-            # print("triangles2:",triangles_positive_scalar)
             # Definiramo slovar, kjer indeks roba predstavlja ključ, število pojavitev pa vrednost. 
             edge_count = {}
             # V slovar vstavimo robove vseh trikotnikov, ki so nam dali pozitiven skalarni produkt. 
-            for cur_triangle in triangles_positive_scalar:
+            for cur_triangle in triangles_positive_scalar:  
                 edge_count[(cur_triangle.vertices[0], cur_triangle.vertices[1])] = edge_count.get((cur_triangle.vertices[0], cur_triangle.vertices[1]), 0) + 1
                 edge_count[(cur_triangle.vertices[1], cur_triangle.vertices[2])] = edge_count.get((cur_triangle.vertices[1], cur_triangle.vertices[2]), 0) + 1
                 edge_count[(cur_triangle.vertices[2], cur_triangle.vertices[0])] = edge_count.get((cur_triangle.vertices[2], cur_triangle.vertices[0]), 0) + 1
+            new_edges = []
             for edge, count in edge_count.items():
                 # Robove, ki se pojavijo več kot enkrat odstranimo z izbočene lupine. Prav tako z izbočene lupine odstranimo vse točke, ki smo jim odstranili vse robove.
                 if count > 1:
-                    # print(hull_edge)
-                    # print("edge:",edge)
                     hull_edge.remove(edge)
+                if count == 1 and edge not in new_edges:
+                    new_edges.append(edge)
             for vertex in hull_vertex:
                 if vertex not in edge_count.keys():
-                    hull_vertex.remove(vertex)
-                    
-                    
+                    hull_vertex.remove(vertex)   
                     
         # Nato poiščemo vse robove, katerih obe oglišči pripadata robovom ki se pojavijo samo enkrat. 
         # Iz le-teh tvorimo nove robove in trikotnike z novo točko, enako kot v primeru 1. 
-        #FIXME: nevem ce vedno pridejo vn 3 tocke oz. kaj nardit ce pride vec
-        #FIXME: lahk da se zgodi da ne pride vn noben rob s samo enim pojavom
-            new_edges = []
-            for edge, count in edge_count.items():
-                keys = edge_count.keys()
-                edges_candidates = [e for e in keys if edge[0] in e or edge[1] in e]
-                for e in edges_candidates:
-                    if edge_count[e] == 1:
-                        new_edges.append(e)
+        #FIXME: dela ce je len = 3 vse vec absolutno ne
             new_vertecies = []
-            for edge in new_edges:
+            for edge in hull_edge:
                 for v in edge:
                     if v not in new_vertecies:
                         new_vertecies.append(v)
             if len(new_vertecies) == 0:
                 break
-            print("new_edges:",new_edges)
-            print("new_vertecies:",new_vertecies)
-            P1 = pts[new_vertecies[0]]
-            P2 = pts[new_vertecies[1]]
-            P3 = pts[new_vertecies[2]]
-            #P1P2P
-            V1 = P2 - P1
-            V2 = max_point - P1
-            V3 = max_point - P3
-            Vn = np.cross(V1, V2)
-            o = np.dot(Vn, V3) 
-            if o > 0:
-                Vn = -Vn
-            triangle_P1P2P = Triangle(vertices=[p1, p2, max_point_index], normal=Vn)
-            triangle_stack.append(triangle_P1P2P)
-            triangle_updated.append(triangle_P1P2P)
-
-            
-            #P1P3P
-            V1 = P3 - P1
-            V2 = max_point - P1
-            V3 = max_point - P2
-            Vn = np.cross(V1, V2)
-            o = np.dot(Vn, V3) 
-            if o > 0:
-                Vn = -Vn
-            triangle_P1P3P = Triangle(vertices=[p1, p3, max_point_index], normal=Vn)
-            triangle_stack.append(triangle_P1P3P)
-            triangle_updated.append(triangle_P1P3P)
-            
-            #P2P3P
-            V1 = P3 - P2
-            V2 = max_point - P2
-            V3 = max_point - P1
-            Vn = np.cross(V1, V2)
-            o = np.dot(Vn, V3) 
-            if o > 0:
-                Vn = -Vn
-            triangle_P2P3P = Triangle(vertices=[p2, p3, max_point_index], normal=Vn)
-            triangle_stack.append(triangle_P2P3P)
-            triangle_updated.append(triangle_P2P3P)
-            
+            for i in range(0, len(new_vertecies)):
+                P1 = pts[new_vertecies[i]]
+                P2 = pts[new_vertecies[(i+1)%len(new_vertecies)]]
+                P3 = pts[new_vertecies[(i+2)%len(new_vertecies)]]
+                V1 = P2 - P1
+                V2 = max_point - P1
+                V3 = max_point - P3
+                Vn = np.cross(V1, V2)
+                o = np.dot(Vn, V3)
+                if o > 0:
+                    Vn = -Vn
+                triangle = Triangle(vertices=[new_vertecies[i], new_vertecies[(i+1)%len(new_vertecies)], max_point_index], normal=Vn)
+                triangle_stack.append(triangle)
+                triangle_updated.append(triangle)   
             
             for triangle in triangle_updated:
                 hull_edge.extend([(triangle.vertices[0], triangle.vertices[1]),
@@ -329,22 +292,49 @@ def dodajanje_tock(pts, p1, p2, p3, p4):
                 
             
             # Na koncu iteracije odstranimo vse trikotnike, ki so nam dali pozitiven skalarni produkt s sklada.
-            #FIXME: odstranit je treba robove trikotnikov ki jih damo dol iz stacka se mi zdi, glej line 278-29 + ostale fixme
             for tri in triangles_positive_scalar:
                 if tri in triangle_stack:
                     triangle_stack.remove(tri)
-        
+                    edges = [
+                        (tri.vertices[0], tri.vertices[1]),
+                        (tri.vertices[1], tri.vertices[2]),
+                        (tri.vertices[2], tri.vertices[0]),
+                    ]
+                    for edge in edges:
+                        if edge in hull_edge:
+                            hull_edge.remove(edge)
+        # print("current_triangle:",current_triangle.vertices)
+        hull_edge.remove((current_triangle.vertices[0], current_triangle.vertices[1]))
+        hull_edge.remove((current_triangle.vertices[1], current_triangle.vertices[2]))
+        hull_edge.remove((current_triangle.vertices[2], current_triangle.vertices[0]))       
     return hull_edge
 
 
 def QuickHull3d(pts):
     P1, P2, P3, P4 = tetraeder(pts) 
     return dodajanje_tock(pts, P1, P2, P3, P4)
+def plotHull(pts, hull):
+    fig = plt.figure()
+    ax = plt.axes(projection="3d")
+    for i in range(0, len(hull)):
+        ax.plot3D(
+            [pts[hull[i][0]][0], pts[hull[i][1]][0]],
+            [pts[hull[i][0]][1], pts[hull[i][1]][1]],
+            [pts[hull[i][0]][2], pts[hull[i][1]][2]],
+            "gray",
+        )
 
-
+    ax.scatter3D(
+        pts[:, 0],
+        pts[:, 1],
+        pts[:, 2],
+        color="black",
+    )
+    plt.show()
 if __name__ == "__main__":
     np.random.seed(1)
-    pts = np.random.normal(scale=2.0, size=(15, 3))
+    pts = np.random.normal(scale=2.0, size=(10, 3))
+    print (pts)
     hull = QuickHull3d(pts)
     fig = plt.figure()
     ax = plt.axes(projection="3d")
