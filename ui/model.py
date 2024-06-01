@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import image_canny
 import numpy as np
 import cv2
-
+# dodam samo za jira commit -> prvič sem naredil narobe
 train = dataset.CustomDataset(root=r'D:\uni\ui\Umetna inteligenca\img2', csv_file=r'D:\uni\ui\Umetna inteligenca\output.csv', transform=ToTensor())
 data  = DataLoader(train, batch_size=16)
 
