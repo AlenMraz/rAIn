@@ -20,13 +20,16 @@ from torch import nn
 from torchvision.transforms import ToTensor
 import image_canny
 import matplotlib.pyplot as plt
-
+from prometheus_client import start_http_server, Counter
+from prometheus_client import Gauge
+import psutil
 
 class RainDetectionApp(QMainWindow):
     def __init__(self, video_path):
         super().__init__()
         self.setWindowTitle("Rain Detection")
-
+        start_http_server(8000)
+        self.last_detection = None
         # Main video display
         self.video_label = QLabel()
         self.video_label.setFixedSize(480, 480)
@@ -156,12 +159,20 @@ class RainDetectionApp(QMainWindow):
 
         # Perform rain detection and update the status
         rain_status = self.detect_rain(cropped_frame)
+        RAINSTATUS = Gauge('rain_status', 'Rain status')
+        RAINSTATUS.set(rain_status)
+        CHANGES = Counter('changes', 'Changes')
+        if rain_status != self.last_detection:
+            CHANGES.inc()
+            self.last_detection = rain_status
+        last_detection = rain_status
         self.status_label.setText(f"Status: {rain_status}")
         
         if rain_status == "Heavy rain":
             self.high_frames_count += 1
             if self.high_frames_count > 3:
                 self.warning_label.setText("Warning: Rain is getting stronger!")
+                
         else:
             self.high_frames_count = 0  # Reset count if the status is not "high"
             self.warning_label.setText("")  # Clear the warning when rain status changes
@@ -182,31 +193,6 @@ class RainDetectionApp(QMainWindow):
 
     def closeEvent(self, event):
         self.cap.release()
-
-
-class RainIdentifier(nn.Module):
-    def __init__(self):
-        super(RainIdentifier, self).__init__()
-        self.model = nn.Sequential(
-            nn.Conv2d(1, 32, (3, 3), padding=1),
-            nn.BatchNorm2d(32),
-            nn.MaxPool2d((2, 2)),
-            nn.ReLU(),
-            nn.Conv2d(32, 64, (3, 3), padding=1),
-            nn.BatchNorm2d(64),
-            nn.MaxPool2d((2, 2)),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, (3, 3), padding=1),
-            nn.BatchNorm2d(64),
-            nn.MaxPool2d((2, 2)),
-            nn.ReLU(),
-            nn.Dropout(0.25),
-            nn.Flatten(),
-            nn.Linear(64 * 60 * 60, 4),
-        )
-
-    def forward(self, x):
-        return self.model(x)
 
 
 if __name__ == "__main__":
