@@ -25,6 +25,7 @@ from prometheus_client import Gauge
 import psutil
 RAINSTATUS = Gauge('rain_status', 'Rain status')
 CHANGES = Counter('changes', 'Changes')
+HEAVY_RAIN = Counter('heavy_rain', 'Heavy rain')
 SYSTEM_USAGE = Gauge('system_usage_algo',
                     'Hold current system resource usage',
                     ['resource_type'])
@@ -176,9 +177,9 @@ class RainDetectionApp(QMainWindow):
         
         if rain_status == "Heavy rain":
             self.high_frames_count += 1
-            if self.high_frames_count > 3:
+            if self.high_frames_count > 2:
                 self.warning_label.setText("Warning: Rain is getting stronger!")
-                
+                HEAVY_RAIN.inc(1)        
         else:
             self.high_frames_count = 0  # Reset count if the status is not "high"
             self.warning_label.setText("")  # Clear the warning when rain status changes
