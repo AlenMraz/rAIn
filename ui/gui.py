@@ -23,13 +23,18 @@ import matplotlib.pyplot as plt
 from prometheus_client import start_http_server, Counter
 from prometheus_client import Gauge
 import psutil
+RAINSTATUS = Gauge('rain_status', 'Rain status')
+CHANGES = Counter('changes', 'Changes')
+SYSTEM_USAGE = Gauge('system_usage_algo',
+                    'Hold current system resource usage',
+                    ['resource_type'])
 
 class RainDetectionApp(QMainWindow):
     def __init__(self, video_path):
         super().__init__()
         self.setWindowTitle("Rain Detection")
         start_http_server(8000)
-        self.last_detection = None
+        self.last_detection = "Not raining"
         # Main video display
         self.video_label = QLabel()
         self.video_label.setFixedSize(480, 480)
@@ -91,6 +96,7 @@ class RainDetectionApp(QMainWindow):
         )
         self.clf.eval()
         self.classes = {0: "Moderate rain", 1: "Heavy rain", 2: "Not raining", 3: "Drizzle"}
+        self.classes_inv = {v: k for k, v in self.classes.items()}
         # Clear the status before detecting rain
         self.status_label.setText("")
 
@@ -159,13 +165,13 @@ class RainDetectionApp(QMainWindow):
 
         # Perform rain detection and update the status
         rain_status = self.detect_rain(cropped_frame)
-        RAINSTATUS = Gauge('rain_status', 'Rain status')
-        RAINSTATUS.set(rain_status)
-        CHANGES = Counter('changes', 'Changes')
+        SYSTEM_USAGE.labels('cpu').set(psutil.cpu_percent())
+        SYSTEM_USAGE.labels('memory').set(psutil.virtual_memory().percent)
+
+        RAINSTATUS.set(self.classes_inv[rain_status])     
         if rain_status != self.last_detection:
-            CHANGES.inc()
+            CHANGES.inc(1)
             self.last_detection = rain_status
-        last_detection = rain_status
         self.status_label.setText(f"Status: {rain_status}")
         
         if rain_status == "Heavy rain":
@@ -193,10 +199,32 @@ class RainDetectionApp(QMainWindow):
 
     def closeEvent(self, event):
         self.cap.release()
+class RainIdentifier(nn.Module):
+    def __init__(self):
+        super(RainIdentifier, self).__init__()
+        self.model = nn.Sequential(
+            nn.Conv2d(1, 32, (3, 3), padding=1),
+            nn.BatchNorm2d(32),
+            nn.MaxPool2d((2, 2)),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, (3, 3), padding=1),
+            nn.BatchNorm2d(64),
+            nn.MaxPool2d((2, 2)),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, (3, 3), padding=1),
+            nn.BatchNorm2d(64),
+            nn.MaxPool2d((2, 2)),
+            nn.ReLU(),
+            nn.Dropout(0.25),
+            nn.Flatten(),
+            nn.Linear(64 * 60 * 60, 4),
+        )
 
+    def forward(self, x):
+        return self.model(x)
 
 if __name__ == "__main__":
-    video_path = "video.mp4"
+    video_path = "video2.mp4"
     app = QApplication(sys.argv)
     window = RainDetectionApp(video_path)
     window.show()
