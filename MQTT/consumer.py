@@ -2,7 +2,7 @@
 import paho.mqtt.client as mqtt
 
 # IP naslov MQTT Broker-ja (Mosquitto MQTT)
-broker = "10.8.8.2"
+broker = "127.0.0.1"
 
 # Port MQTT Broker-ja (Mosquitto MQTT)
 port = 1883
@@ -21,7 +21,7 @@ def on_message(client, userdata, msg):
 
 # Nastavitev MQTT klienta
 # clean_session: indicate if persistent connection is required
-client = mqtt.Client(client_id="alen", clean_session=False, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+client = mqtt.Client(client_id="client_1", clean_session=False, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 
 # Povezava na MQTT broker
 client.connect(broker, port, 60)
