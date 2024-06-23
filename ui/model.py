@@ -8,7 +8,7 @@ from torchvision.transforms import ToTensor
 import os
 import PIL
 import matplotlib.pyplot as plt
-import image_canny
+import SIS.image_canny as image_canny
 import numpy as np
 import cv2
 # dodam samo za jira commit -> prvič sem naredil narobe
