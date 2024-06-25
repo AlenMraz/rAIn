@@ -7,4 +7,4 @@ Projekt združuje znanja štirih predmetov:
 - Uvod v računalniško geomtrijo
 
 
-dokumentacijo za razvijalce lahko najdete v [project wiki](https://github.com/AlenMraz/rAIn/wiki)
+Dokumentacijo za razvijalce lahko najdete v [project wiki](https://github.com/AlenMraz/rAIn/wiki).
