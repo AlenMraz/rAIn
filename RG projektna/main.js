@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
 
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const cameraPosition = new THREE.Vector3(0, 5, 0);
-const target = new THREE.Vector3(0, 0, 0); //camera target must match controls target
+const cameraPosition = new THREE.Vector3(-1.25, 2.5, -1);
+const target = new THREE.Vector3(3, 3, 0); //camera target must match controls target
 camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 camera.lookAt(target);
 
@@ -21,11 +22,27 @@ scene.add(light);
 const ambientLight = new THREE.AmbientLight(0x404040);
 scene.add(ambientLight);
 
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.target.set( 0, 0, 0 );
-controls.update();
-controls.enablePan = false;
-controls.enableDamping = true;
+
+const controls = new PointerLockControls(camera, document.body);
+
+// Add event listeners for mouse buttons
+document.body.addEventListener('mousedown', (event) => {
+    if (event.button === 0) { // Left click
+        controls.lock();
+    } else if (event.button === 2) { // Right click
+        controls.unlock();
+    }
+});
+
+// Prevent the context menu from appearing on right-click
+document.addEventListener('contextmenu', (event) => event.preventDefault());
+
+controls.addEventListener('lock', () => {
+    console.log('PointerLockControls: Mouse locked');
+});
+controls.addEventListener('unlock', () => {
+    console.log('PointerLockControls: Mouse unlocked');
+});
 
 // Create raindrop geometry and material
 // const rainGeometry = new THREE.BufferGeometry();
@@ -67,7 +84,7 @@ loadOBJ('/Straight.obj', scene,"Straight", {
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: 0, y: 0, z: 0 },
 });
-loadOBJ('/avto.obj', scene,"avto", {
+loadOBJ('/avto2.obj', scene,"avto", {
     position: { x: 0, y: 1, z: 0 },
     scale: { x: 0.5, y: 0.5, z: 0.5 },
     rotation: { x: 0, y: 0, z: 0 },
