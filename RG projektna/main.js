@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OBJLoader } from "three/addons";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import Stats from "stats.js";
 
 const stats = new Stats();
@@ -28,7 +30,6 @@ camera.lookAt(target);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.alpha = true;
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
@@ -59,6 +60,7 @@ rainGeometry.setAttribute(
 const rainMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
 const rain = new THREE.Points(rainGeometry, rainMaterial);
 scene.add(rain);
+let droplets = [];
 
 const controls = new PointerLockControls(camera, document.body);
 
@@ -93,21 +95,54 @@ loadOBJ("/Straight.obj", scene, "Straight", {
 //     scale: { x: 0.5, y: 0.5, z: 0.5 },
 //     rotation: { x: 0, y: 0, z: 0 },
 // });
-loadOBJWithMTL("/avtomobil.obj", "/avtomobil.mtl", scene, "avto", {
-  position: { x: 0, y: 1, z: 0 },
-  scale: { x: 0.5, y: 0.5, z: 0.5 },
-  rotation: { x: 0, y: 0, z: 0 },
-});
-let model;
-setTimeout(() => {
-    model = scene.getObjectByName("avto");
-    console.log(model);
-}, 1000);
-console.log(model);
+// loadOBJWithMTL("/avtomobil.obj", "/avtomobil.mtl", scene, "avto", {
+//   position: { x: 0, y: 1, z: 0 },
+//   scale: { x: 0.5, y: 0.5, z: 0.5 },
+//   rotation: { x: 0, y: 0, z: 0 },
+// });
+// let model;
+// setTimeout(() => {
+//   model = scene.getObjectByName("avto");
+//   console.log(model);
+// }, 1000);
+// console.log(model);
+let loadedModel;
 
+function loadGLTF(url, onLoad) {
+  const loader = new GLTFLoader();
+
+  loader.load(
+    url,
+    (gltf) => {
+      const model = gltf.scene;
+      model.scale.set(0.5, 0.5, 0.5);
+      model.position.set(0, 1, 0);
+      scene.add(model);
+
+      console.log("GLTF loaded:", model);
+      if (onLoad) onLoad(model); // Callback when the model is loaded
+
+      loadedModel = model;
+    },
+    (xhr) => {
+      console.log(`${url}: ${(xhr.loaded / xhr.total) * 100}% loaded`);
+    },
+    (error) => {
+      console.error(`Error loading GLTF:`, error);
+    }
+  );
+}
+let rainEnabled = false;
+// Load a GLTF/GLB file
+loadGLTF("/avto.glb", (model) => {
+  rainEnabled = true;
+  console.log("Model fully loaded:", model);
+});
 function animate() {
   stats.begin();
-  animateRain();
+  if (rainEnabled) {
+    animateRain();
+  }
   renderer.render(scene, camera);
   controls.update();
   stats.end();
@@ -161,7 +196,7 @@ function loadOBJ(url, scene, name, options = {}) {
     }
   );
 }
-function loadOBJWithMTL(objUrl, mtlUrl, scene, name, options = {}) {
+function loadOBJWithMTL(objUrl, mtlUrl, scene, name, options = {}, callback) {
   const mtlLoader = new MTLLoader();
 
   mtlLoader.load(
@@ -203,6 +238,10 @@ function loadOBJWithMTL(objUrl, mtlUrl, scene, name, options = {}) {
           console.log(
             `Successfully loaded ${objUrl} with materials from ${mtlUrl}`
           );
+
+          if (callback) {
+            callback(object); // Pass the loaded object to the callback
+          }
         },
         (xhr) => {
           console.log(`${objUrl}: ${(xhr.loaded / xhr.total) * 100}% loaded`);
@@ -235,7 +274,7 @@ function animateRain() {
       // Debug the ray
       debugRay(raycaster);
 
-      const intersects = raycaster.intersectObject(model);
+      const intersects = raycaster.intersectObject(loadedModel);
       if (intersects.length > 0) {
         console.log("Intersection detected:", intersects[0]);
         addDroplet(intersects[0].point, intersects[0].face.normal);
@@ -265,8 +304,9 @@ function addDroplet(position, normal) {
   scene.add(debugSphere);
 
   // Create Droplet (Decal)
+  //28 == sajba
   const dropletGeometry = new DecalGeometry(
-    model,
+    loadedModel.children[28],
     dropletPosition,
     normal,
     new THREE.Vector3(0.2, 0.2, 0.2)
