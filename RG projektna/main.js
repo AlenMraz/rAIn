@@ -7,7 +7,7 @@ import { initRain } from "./src/rain.js";
 // Scene Initialization
 const { scene, camera, renderer, stats, controls } = initScene();
 // Rain Setup
-const { rain, rainPositions } = initRain(scene, 1000);
+const { rain } = initRain(scene, 1000);
 
 // Loaders and Model Setup
 let loadedModel;
@@ -32,7 +32,7 @@ Promise.all(loadingTasks).then(() => {
 // Animation Loop
 function animate() {
   stats.begin();
-  animateRain(rain, rainPositions, loadedModel, scene);
+  animateRain(rain, loadedModel, scene);
   renderer.render(scene, camera);
   controls.update();
   stats.end();

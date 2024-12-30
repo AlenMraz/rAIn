@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 
-function animateRain(rain, rainPositions, loadedModel, scene) {
+function animateRain(rain,loadedModel, scene) {
   const positions = rain.geometry.attributes.position.array;
   for (let i = 0; i < positions.length; i += 3) {
     positions[i + 1] -= 0.1; // Simulate rain falling
