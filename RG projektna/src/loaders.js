@@ -3,15 +3,14 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { applyTransformations } from './transformations.js';
 
-function loadGLTF(scene, url) {
+function loadGLTF(scene, url, options = {}) {
   return new Promise((resolve, reject) => {
     const loader = new GLTFLoader();
     loader.load(
       url,
       (gltf) => {
         const model = gltf.scene;
-        model.scale.set(0.5, 0.5, 0.5);
-        model.position.set(0, 1, 0);
+        applyTransformations(model, options);
         scene.add(model);
         resolve(model);
       },

@@ -1,4 +1,3 @@
-
 import { loadGLTF, loadOBJ } from "./src/loaders.js";
 import { animateRain } from "./src/rainAnimation.js";
 import { initScene } from "./src/scene.js";
@@ -14,7 +13,11 @@ let loadedModel;
 
 // Track Loading Completion
 const loadingTasks = [
-  loadGLTF(scene, "/avto.glb").then((model) => {
+  loadGLTF(scene, "/avto.glb", {
+    position: { x: 0, y: 1, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+    rotation: { x: 0, y: 0, z: 0 },
+  }).then((model) => {
     loadedModel = model;
   }),
   loadOBJ(scene, "/Straight.obj", "Straight", {
