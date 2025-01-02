@@ -13,7 +13,6 @@ function animateRain(rain,loadedModel, scene) {
       scene
     );
     if ((positions[i + 1] < 0) || repositioned ) {
-      // Reset if raindrop falls below a threshold
       positions[i] = Math.random() * 10 - 5;
       positions[i + 1] = Math.random() * 10 + 5;
       positions[i + 2] = Math.random() * 10 - 5;
@@ -42,9 +41,9 @@ function handleRainCollision(index, rainPositions, loadedModel, scene) {
       );
     }
 
-    return true; // Collision detected
+    return true; 
   }
-  return false; // No collision
+  return false; 
 }
 
 function addDroplet(position, normal, loadedModel, scene) {
@@ -52,19 +51,32 @@ function addDroplet(position, normal, loadedModel, scene) {
   const dropletPosition = position.clone().add(offset);
 
   const dropletGeometry = new DecalGeometry(
-    loadedModel.children[28], //.children[28] za sajbo
-    dropletPosition,
+    loadedModel.children[28],
     normal,
-    new THREE.Vector3(0.2, 0.2, 0.2)
+    new THREE.Vector3(0.1, 0.1, 0.1) 
   );
+
+  //TODO: ne loada slike + ne vem ce je to najbolsi approach
+  const alphaTexture = new THREE.TextureLoader().load('/assets/circle.png'); 
+
+  alphaTexture.onLoad = () => {
+    console.log('Alpha map loaded successfully!');
+  };
+  
+  alphaTexture.onError = (err) => {
+    console.error('Error loading texture:', err);
+  };
+  
   const dropletMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff0000,
-    emissive: 0x4444ff,
+    color: 0xff0000, 
+    emissive: 0x4444ff, 
     transparent: true,
     opacity: 0.8,
-    depthWrite: false,
-    side: THREE.FrontSide,
+    alphaMap: alphaTexture, 
+    depthWrite: false, 
+    side: THREE.FrontSide, 
   });
+
   const droplet = new THREE.Mesh(dropletGeometry, dropletMaterial);
   scene.add(droplet);
 
