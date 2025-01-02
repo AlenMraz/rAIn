@@ -2,9 +2,10 @@ import { loadGLTF, loadOBJ } from "./src/loaders.js";
 import { animateRain } from "./src/rainAnimation.js";
 import { initScene } from "./src/scene.js";
 import { initRain } from "./src/rain.js";
+import { takePictureFromCamera } from "./src/camera.js";
 
 // Scene Initialization
-const { scene, camera, renderer, stats, controls } = initScene();
+const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 // Rain Setup
 const { rain } = initRain(scene, 1000);
 
@@ -46,4 +47,12 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "C" || event.key === "c") { // Press 'C' to take picture
+    const capturedImage = takePictureFromCamera(cameraCamera, renderer, scene);
+    // Example: Save the captured image to a file or send it to a server
+    console.log("Picture taken from cameraPlayer");
+  }
 });
