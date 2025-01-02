@@ -52,6 +52,7 @@ function addDroplet(position, normal, loadedModel, scene) {
 
   const dropletGeometry = new DecalGeometry(
     loadedModel.children[28],
+    dropletPosition,
     normal,
     new THREE.Vector3(0.1, 0.1, 0.1) 
   );
