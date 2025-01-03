@@ -10,7 +10,7 @@ const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 const { rain } = initRain(scene, 1000);
 
 // Loaders and Model Setup
-let loadedModel;
+let model_car;
 
 // Track Loading Completion
 const loadingTasks = [
@@ -19,7 +19,7 @@ const loadingTasks = [
     scale: { x: 0.5, y: 0.5, z: 0.5 },
     rotation: { x: 0, y: 0, z: 0 },
   }).then((model) => {
-    loadedModel = model;
+    model_car = model;
   }),
   loadOBJ(scene, "/Straight.obj", "Straight", {
     position: { x: 0, y: 0, z: 0 },
@@ -37,7 +37,7 @@ Promise.all(loadingTasks).then(() => {
 // Animation Loop
 function animate() {
   stats.begin();
-  animateRain(rain, loadedModel, scene);
+  animateRain(rain, model_car, scene);
   renderer.render(scene, camera);
   controls.update();
   stats.end();

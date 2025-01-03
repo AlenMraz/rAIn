@@ -2,10 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import CORS
 import os
 from PIL import Image
+from torchvision.transforms import ToTensor
+import torch
+from image_canny import to_canny_new
 
 app = Flask(__name__)
-
-# Enable CORS for the entire app
+classes = {0:'mid', 1:'high', 2:'not', 3:'drizzle'}
+clf = torch.load('model.pth', map_location='cpu')
+clf.eval()
 CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
@@ -27,21 +31,33 @@ def upload_image():
         file.save(filepath)
 
         try:
-            # Process the image using Pillow
-            with Image.open(filepath) as img:
-                width, height = img.size
-
-            message = f"Image uploaded successfully! Dimensions: {width}x{height}"
+            image = to_canny_new(crop_center(Image.open(filepath))) 
+            img_tensor = ToTensor()(image).unsqueeze(0)
+            output = torch.argmax(clf(img_tensor))
+            message = f"Image evaluated successfully! Classification: {classes[output.item()]}"
+            classification = classes[output.item()]
         except Exception as e:
             message = f"Image uploaded, but an error occurred during processing: {str(e)}"
 
-        return jsonify({"message": message})
+        return jsonify({"message": message, "classification": classification}), 200
     else:
         return jsonify({"error": "Allowed file types are jpg, jpeg, png, gif"}), 400
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def crop_center(image_path, crop_width, crop_height):
+    img = Image.open(image_path)
+
+    width, height = img.size
+
+    left = (width - crop_width) // 2
+    top = (height - crop_height) // 2
+    right = left + crop_width
+    bottom = top + crop_height
+
+    cropped_img = img.crop((left, top, right, bottom))
+    return cropped_img
 
 if __name__ == '__main__':
     app.run(debug=True)
