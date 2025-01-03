@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 
-function animateRain(rain,loadedModel, scene) {
+function animateRain(rain,loadedModel, scene, droplets) {
   const positions = rain.geometry.attributes.position.array;
   for (let i = 0; i < positions.length; i += 3) {
     positions[i + 1] -= 0.1; // Simulate rain falling
@@ -10,7 +10,8 @@ function animateRain(rain,loadedModel, scene) {
       i,
       positions,
       loadedModel,
-      scene
+      scene,
+      droplets
     );
     if ((positions[i + 1] < 0) || repositioned ) {
       positions[i] = Math.random() * 10 - 5;
@@ -21,7 +22,7 @@ function animateRain(rain,loadedModel, scene) {
   rain.geometry.attributes.position.needsUpdate = true;
 }
 
-function handleRainCollision(index, rainPositions, loadedModel, scene) {
+function handleRainCollision(index, rainPositions, loadedModel, scene, droplets) {
   const raycaster = new THREE.Raycaster(
     new THREE.Vector3(
       rainPositions[index],
@@ -37,7 +38,8 @@ function handleRainCollision(index, rainPositions, loadedModel, scene) {
         intersects[0].point,
         intersects[0].face.normal,
         loadedModel,
-        scene
+        scene,
+        droplets
       );
     }
 
@@ -46,7 +48,7 @@ function handleRainCollision(index, rainPositions, loadedModel, scene) {
   return false; 
 }
 
-function addDroplet(position, normal, loadedModel, scene) {
+function addDroplet(position, normal, loadedModel, scene, droplets) {
   const offset = normal.clone().multiplyScalar(0.01);
   const dropletPosition = position.clone().add(offset);
 
@@ -79,8 +81,12 @@ function addDroplet(position, normal, loadedModel, scene) {
   });
 
   const droplet = new THREE.Mesh(dropletGeometry, dropletMaterial);
+  droplet.name = "Droplet";
   scene.add(droplet);
-
-  setTimeout(() => scene.remove(droplet), 3000);
+  droplets.push(droplet);
+  // setTimeout(() => {
+  //   scene.remove(droplets.shift());
+  // }, 1000);
+  // setTimeout(() => scene.remove(droplet), 3000);
 }
 export { animateRain };

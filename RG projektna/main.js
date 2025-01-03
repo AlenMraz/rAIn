@@ -4,7 +4,7 @@ import { animateRain } from "./src/rainAnimation.js";
 import { initScene } from "./src/scene.js";
 import { initRain } from "./src/rain.js";
 import { takePictureFromCamera } from "./src/camera.js";
-
+import { Controler } from "./src/controler.js";
 // Scene Initialization
 const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 
@@ -12,6 +12,8 @@ const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 let rainParticles = [];
 let rainCount = 1000; // Default rain count
 let rainSettings = { count: rainCount };
+let droplets = [];
+
 
 function updateRain(newCount) {
   scene.remove(rainParticles);
@@ -55,12 +57,13 @@ const loadingTasks = [
 Promise.all(loadingTasks).then(() => {
   console.log("All objects loaded, starting animation loop");
   renderer.setAnimationLoop(animate);
+  Controler(cameraCamera, renderer, scene, model_car);
 });
 
 // Animation Loop
 function animate() {
   stats.begin();
-  animateRain(rainParticles, model_car, scene);
+  animateRain(rainParticles, model_car, scene, droplets);
   renderer.render(scene, camera);
   controls.update();
   stats.end();
@@ -80,3 +83,4 @@ window.addEventListener("keydown", (event) => {
     console.log("Picture taken from cameraPlayer");
   }
 });
+
