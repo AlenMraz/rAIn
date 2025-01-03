@@ -1,21 +1,21 @@
-async function sendImage(image){
-    const formData = new FormData();
-    formData.append('image', image);
+async function sendImage(image) {
     try {
-        const response = await fetch("http://127.0.0.1:5000/upload", {
-            method: "POST",
-            body: formData
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: image
         });
 
-        if (response.ok) {
-            alert("Image successfully uploaded!");
-        } else {
-            alert("Failed to upload image.");
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('Server error:', error.error);
+            return null;
         }
+
+        const data = await response.json();
+        return data.classification; // Return the classification
     } catch (error) {
-        console.error("Error sending image:", error);
-        alert("Error sending image.");
+        console.error('Network error:', error);
+        return null;
     }
-    return response;
-} 
+}
 export { sendImage };

@@ -31,6 +31,7 @@ def upload_image():
         file.save(filepath)
 
         try:
+            #TODO: decompress image
             image = to_canny_new(crop_center(Image.open(filepath))) 
             img_tensor = ToTensor()(image).unsqueeze(0)
             output = torch.argmax(clf(img_tensor))
