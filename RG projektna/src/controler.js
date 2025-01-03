@@ -6,6 +6,9 @@ function removeAllDroplets(scene) {
       .forEach((droplet) => scene.remove(droplet)); 
   }
 
+function countAllDroplets(scene) {
+    return scene.children.filter((child) => child.name === "Droplet").length;
+}
   
 async function Controler(camera, renderer, scene, object) {
   function delay(ms) {
@@ -14,6 +17,7 @@ async function Controler(camera, renderer, scene, object) {
 
   while (true) {
     const capturedImage = takePictureFromCamera(camera, renderer, scene);
+    console.log('Droplets:', countAllDroplets(scene));
     removeAllDroplets(scene);
     //const compressedImage = compressImage(capturedImage);
 
