@@ -24,7 +24,7 @@ function initScene() {
   scene.add(camera);
   
   const cameraCamera = new THREE.PerspectiveCamera(
-    90,
+    100,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
@@ -37,7 +37,7 @@ function initScene() {
   const renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-
+  console.log(window.innerWidth, window.innerHeight)
   // Lighting Setup
   initLighting(scene);
   // Pointer Lock Controls

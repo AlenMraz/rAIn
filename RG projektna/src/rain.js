@@ -12,6 +12,6 @@ function initRain(scene, count) {
     const rain = new THREE.Points(rainGeometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 }));
     scene.add(rain);
 
-    return { rain};
+    return { rain };
 }
 export { initRain };

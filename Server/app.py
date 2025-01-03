@@ -32,7 +32,7 @@ def upload_image():
 
         try:
             #TODO: decompress image
-            image = to_canny_new(crop_center(Image.open(filepath))) 
+            image = to_canny_new(Image.open(filepath)) 
             img_tensor = ToTensor()(image).unsqueeze(0)
             output = torch.argmax(clf(img_tensor))
             message = f"Image evaluated successfully! Classification: {classes[output.item()]}"
