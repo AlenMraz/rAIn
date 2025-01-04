@@ -52,6 +52,11 @@ const loadingTasks = [
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: 0, y: 0, z: 0 },
   }),
+  // loadOBJ(scene, "/brisalec.obj", "Brisalec", {
+  //   position: { x: 0.6, y: 2, z: -1.1 },
+  //   scale: { x: 1, y: 1, z: 1 },
+  //   rotation: { x: -0.2, y: -0.5, z: 5 },
+  // }),
 ];
 
 Promise.all(loadingTasks).then(() => {
