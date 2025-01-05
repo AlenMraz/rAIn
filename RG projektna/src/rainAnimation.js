@@ -1,19 +1,19 @@
 import * as THREE from "three";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 
-function animateRain(rain,loadedModel, scene, droplets) {
+function animateRain(rain, loadedModel, scene, droplets) {
   const positions = rain.geometry.attributes.position.array;
   for (let i = 0; i < positions.length; i += 3) {
     positions[i + 1] -= 0.1; // Simulate rain falling
 
-    const repositioned= handleRainCollision(
+    const repositioned = handleRainCollision(
       i,
       positions,
       loadedModel,
       scene,
       droplets
     );
-    if ((positions[i + 1] < 0) || repositioned ) {
+    if (positions[i + 1] < 0 || repositioned) {
       positions[i] = Math.random() * 10 - 5;
       positions[i + 1] = Math.random() * 10 + 5;
       positions[i + 2] = Math.random() * 10 - 5;
@@ -22,7 +22,13 @@ function animateRain(rain,loadedModel, scene, droplets) {
   rain.geometry.attributes.position.needsUpdate = true;
 }
 
-function handleRainCollision(index, rainPositions, loadedModel, scene, droplets) {
+function handleRainCollision(
+  index,
+  rainPositions,
+  loadedModel,
+  scene,
+  droplets
+) {
   const raycaster = new THREE.Raycaster(
     new THREE.Vector3(
       rainPositions[index],
@@ -43,50 +49,57 @@ function handleRainCollision(index, rainPositions, loadedModel, scene, droplets)
       );
     }
 
-    return true; 
+    return true;
   }
-  return false; 
+  return false;
 }
 
 function addDroplet(position, normal, loadedModel, scene, droplets) {
   const offset = normal.clone().multiplyScalar(0.01);
   const dropletPosition = position.clone().add(offset);
 
-  const dropletGeometry = new DecalGeometry(
-    loadedModel.children[28],
-    dropletPosition,
-    normal,
-    new THREE.Vector3(0.1, 0.1, 0.1) 
+  const dropletGeometry = new THREE.CircleGeometry(
+    Math.min(0.2, Math.random()) * 0.1,
+    32
   );
 
-  //TODO: ne loada slike + ne vem ce je to najbolsi approach
-  const alphaTexture = new THREE.TextureLoader().load('/assets/circle.png'); 
-
-  alphaTexture.onLoad = () => {
-    console.log('Alpha map loaded successfully!');
-  };
-  
-  alphaTexture.onError = (err) => {
-    console.error('Error loading texture:', err);
-  };
-  
   const dropletMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff0000, 
-    emissive: 0x4444ff, 
+    color: 0x4444ff,
+    emissive: 0xccccff,
+    emissiveIntensity: 1,
     transparent: true,
-    opacity: 0.8,
-    alphaMap: alphaTexture, 
-    depthWrite: false, 
-    side: THREE.FrontSide, 
+    opacity: 1,
+    depthWrite: true,
+    side: THREE.DoubleSide,
   });
 
   const droplet = new THREE.Mesh(dropletGeometry, dropletMaterial);
   droplet.name = "Droplet";
+
+  droplet.position.copy(dropletPosition);
+
+  droplet.scale.set(1.0, 0.6, 1.0);
+  droplet.lookAt(dropletPosition.clone().add(normal));
+  droplet.rotateX(THREE.MathUtils.degToRad(45));
+
   scene.add(droplet);
   droplets.push(droplet);
-  // setTimeout(() => {
-  //   scene.remove(droplets.shift());
-  // }, 1000);
-  // setTimeout(() => scene.remove(droplet), 3000);
+
+  const fadeDuration = 1200;
+  const fadeInterval = 10;
+  let currentOpacity = dropletMaterial.opacity;
+
+  const fadeOut = () => {
+    if (currentOpacity > 0) {
+      currentOpacity -= fadeInterval / fadeDuration;
+      dropletMaterial.opacity = currentOpacity;
+      setTimeout(fadeOut, fadeInterval);
+    } else {
+      scene.remove(droplet);
+      droplets.splice(droplets.indexOf(droplet), 1);
+    }
+  };
+  fadeOut();
 }
+
 export { animateRain };
