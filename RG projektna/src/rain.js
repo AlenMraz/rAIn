@@ -9,7 +9,21 @@ function initRain(scene, count) {
     ]).flat();
 
     rainGeometry.setAttribute("position", new THREE.Float32BufferAttribute(rainPositions, 3));
-    const rain = new THREE.Points(rainGeometry, new THREE.PointsMaterial({ color: 0xabbbff, size: 0.06 }));
+
+    const textureLoader = new THREE.TextureLoader();
+    const rainTexture = textureLoader.load('/assets/circle6.png');
+
+    const rainMaterial = new THREE.PointsMaterial({
+        color: 0x333388,
+        size: 0.125, 
+        map: rainTexture, 
+        transparent: true, 
+        alphaTest: 0.01, 
+        depthWrite: false, 
+        blending: THREE.AdditiveBlending, 
+        opacity: 1,
+    });
+    const rain = new THREE.Points(rainGeometry, rainMaterial);
     scene.add(rain);
 
     return { rain };
