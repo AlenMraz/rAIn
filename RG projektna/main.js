@@ -5,9 +5,16 @@ import { initScene } from "./src/scene.js";
 import { initRain } from "./src/rain.js";
 import { takePictureFromCamera } from "./src/camera.js";
 import { Controler } from "./src/controler.js";
+import { startMQTTClient } from "./src/mqtt.js";
 // Scene Initialization
 const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 
+//MQTT
+// const broker = "127.0.0.1";
+// const port = 1883;
+// const topic = "/data";
+
+// startMQTTClient(broker, port, topic);
 // Rain Setup
 let rainParticles = [];
 let rainCount = 1000; // Default rain count

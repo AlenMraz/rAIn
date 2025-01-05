@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "mqtt": "^5.10.3",
     "stats.js": "^0.17.0",
     "three": "^0.171.0"
   },
