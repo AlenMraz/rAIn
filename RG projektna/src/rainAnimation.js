@@ -59,7 +59,7 @@ function addDroplet(position, normal, loadedModel, scene, droplets) {
 
   const dropletMaterial = new THREE.MeshStandardMaterial({
     color: 0x4444ff,
-    emissive: 0xffffff,
+    emissive: 0xccccff,
     emissiveIntensity: 1,
     transparent: true,
     opacity: 0.8,
