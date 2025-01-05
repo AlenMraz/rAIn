@@ -9,7 +9,7 @@ function initRain(scene, count) {
     ]).flat();
 
     rainGeometry.setAttribute("position", new THREE.Float32BufferAttribute(rainPositions, 3));
-    const rain = new THREE.Points(rainGeometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 }));
+    const rain = new THREE.Points(rainGeometry, new THREE.PointsMaterial({ color: 0xabbbff, size: 0.06 }));
     scene.add(rain);
 
     return { rain };
