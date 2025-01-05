@@ -5,7 +5,14 @@ from PIL import Image
 from torchvision.transforms import ToTensor
 import torch
 from image_canny import to_canny_new
+from prometheus_client import start_http_server, Counter
+from prometheus_client import Gauge
 
+RAINSTATUS = Gauge('rain_status', 'Rain status')
+CHANGES = Counter('changes', 'Changes')
+HEAVY_RAIN = Counter('heavy_rain', 'Heavy rain')
+last_detection = "not"
+start_http_server(8000)
 app = Flask(__name__)
 classes = {0:'mid', 1:'high', 2:'not', 3:'drizzle'}
 clf = torch.load('model.pth', map_location='cpu')
@@ -37,6 +44,12 @@ def upload_image():
             output = torch.argmax(clf(img_tensor))
             message = f"Image evaluated successfully! Classification: {classes[output.item()]}"
             classification = classes[output.item()]
+            if classification != last_detection:
+                CHANGES.inc(1)
+                last_detection = classification
+            RAINSTATUS.set(classification)
+            if classification == "high":
+                HEAVY_RAIN.inc(1)
         except Exception as e:
             message = f"Image uploaded, but an error occurred during processing: {str(e)}"
 
