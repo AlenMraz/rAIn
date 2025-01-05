@@ -1,19 +1,19 @@
 import * as THREE from "three";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 
-function animateRain(rain, loadedModel, scene, droplets) {
+function animateRain(rain,loadedModel, scene, droplets) {
   const positions = rain.geometry.attributes.position.array;
   for (let i = 0; i < positions.length; i += 3) {
     positions[i + 1] -= 0.1; // Simulate rain falling
 
-    const repositioned = handleRainCollision(
+    const repositioned= handleRainCollision(
       i,
       positions,
       loadedModel,
       scene,
       droplets
     );
-    if (positions[i + 1] < 0 || repositioned) {
+    if ((positions[i + 1] < 0) || repositioned ) {
       positions[i] = Math.random() * 10 - 5;
       positions[i + 1] = Math.random() * 10 + 5;
       positions[i + 2] = Math.random() * 10 - 5;
@@ -22,13 +22,7 @@ function animateRain(rain, loadedModel, scene, droplets) {
   rain.geometry.attributes.position.needsUpdate = true;
 }
 
-function handleRainCollision(
-  index,
-  rainPositions,
-  loadedModel,
-  scene,
-  droplets
-) {
+function handleRainCollision(index, rainPositions, loadedModel, scene, droplets) {
   const raycaster = new THREE.Raycaster(
     new THREE.Vector3(
       rainPositions[index],
@@ -49,9 +43,9 @@ function handleRainCollision(
       );
     }
 
-    return true;
+    return true; 
   }
-  return false;
+  return false; 
 }
 
 function addDroplet(position, normal, loadedModel, scene, droplets) {

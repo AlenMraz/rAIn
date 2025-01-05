@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Image to Server</title>
+</head>
+<body>
+    <h1>Upload Image</h1>
+    
+    <!-- File Input to Upload Image -->
+    <input type="file" id="imageInput" accept="image/*">
+    <br><br>
+    <button onclick="sendImageToServer()">Send Image to Server</button>
+
+    <script>
+        // Function to send image to the server
+        async function sendImageToServer() {
+            const input = document.getElementById('imageInput');
+            const formData = new FormData();
+
+            // Check if an image is selected
+            if (input.files.length > 0) {
+                formData.append("image", input.files[0]);
+
+                try {
+                    // Send the image to the server using a POST request
+                    const response = await fetch("http://127.0.0.1:5000/upload", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    // Handle server response
+                    if (response.ok) {
+                        alert("Image successfully uploaded!");
+                    } else {
+                        alert("Failed to upload image.");
+                    }
+                } catch (error) {
+                    console.error("Error sending image:", error);
+                    alert("Error sending image.");
+                }
+            } else {
+                alert("Please select an image first.");
+            }
+        }
+    </script>
+</body>
+</html>
