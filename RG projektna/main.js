@@ -52,6 +52,16 @@ const loadingTasks = [
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: 0, y: 0, z: 0 },
   }),
+  loadOBJ(scene, "/armaturna_plosca.obj", "armaturna_plosca", {
+    position: { x: -0.5, y: 2, z: -0.9 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: 0, y: 3.9, z: 0 },
+  }),
+  loadOBJ(scene, "/RG-volan.obj", "volan", {
+    position: { x: -0.6, y: 2.05, z: -0.9 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: 0, y: 3.1, z: 0 },
+  }),
   // loadOBJ(scene, "/brisalec.obj", "Brisalec", {
   //   position: { x: 0.6, y: 2, z: -1.1 },
   //   scale: { x: 1, y: 1, z: 1 },
