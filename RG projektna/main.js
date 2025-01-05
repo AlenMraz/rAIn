@@ -10,11 +10,11 @@ import { startMQTTClient } from "./src/mqtt.js";
 const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 
 //MQTT
-// const broker = "127.0.0.1";
-// const port = 1883;
-// const topic = "/data";
+const broker = "127.0.0.1";
+const port = 8083;
+const topic = "/data";
 
-// startMQTTClient(broker, port, topic);
+startMQTTClient(broker, port, topic);
 // Rain Setup
 let rainParticles = [];
 let rainCount = 1000; // Default rain count

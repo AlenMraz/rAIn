@@ -5,7 +5,8 @@ services:
     image: eclipse-mosquitto   # Ime slike
     container_name: mosquitto  # Ime kontejnerja
     ports:
-      - "1883:1883"            # MQTT privzeti port
+      - "1883:1883" 
+      - "8083:8083"           # MQTT privzeti port
     volumes:                   # Priklop konfiguracijske datoteke v kontejner
       - ./data_mosquitto:/etc/mosquitto                                   
       - ./data_mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf  # Potrebno ustvariti datoteko mosquitto.conf

@@ -1,6 +1,9 @@
+import mqtt from 'mqtt';
 function startMQTTClient(broker, port, topic, clientId = "client_1", cleanSession = false) {
     // Create an MQTT client
-    const client = mqtt.connect(`mqtt://${broker}:${port}`, {
+    const connectionString = `ws://${broker}:${port}/mqtt`;
+    console.log(connectionString);
+    const client = mqtt.connect(connectionString, {
         clientId: clientId,
         clean: cleanSession
     });
