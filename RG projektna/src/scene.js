@@ -11,7 +11,7 @@ function initScene() {
 
   // Scene Setup
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x87ceeb);
+  scene.background = new THREE.Color(0x766666);
   // Camera Setup
   const camera = new THREE.PerspectiveCamera(
     75,
@@ -37,6 +37,7 @@ function initScene() {
   const renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
+  //console.log(window.innerWidth, window.innerHeight)
   // Lighting Setup
   initLighting(scene);
   // Pointer Lock Controls
