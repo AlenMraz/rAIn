@@ -1,10 +1,12 @@
 import GUI from "three/addons/libs/lil-gui.module.min.js";
 import { loadGLTF, loadOBJ } from "./src/loaders.js";
 import { animateRain } from "./src/rainAnimation.js";
+import { animateWiper } from "./src/wiperAnimation.js";
 import { initScene } from "./src/scene.js";
 import { initRain } from "./src/rain.js";
 import { takePictureFromCamera } from "./src/camera.js";
 import { Controler } from "./src/controler.js";
+import { screenColor } from "./src/screen.js";
 import { startMQTTClient } from "./src/mqtt.js";
 // Scene Initialization
 const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
@@ -20,6 +22,7 @@ let rainParticles = [];
 let rainCount = 1000; // Default rain count
 let rainSettings = { count: rainCount };
 let droplets = [];
+let wipers = [];
 
 
 function updateRain(newCount) {
@@ -30,6 +33,7 @@ function updateRain(newCount) {
 
   console.log(`Rain count updated to: ${newCount}`);
 }
+
 
 const { rain } = initRain(scene, rainCount);
 rainParticles = rain;
@@ -44,6 +48,8 @@ gui.add(rainSettings, "count", 0, 5000, 100) // Slider for rain count
 
 // Loaders and Model Setup
 let model_car;
+let phone;
+let phoneScreen;
 
 // Track Loading Completion
 const loadingTasks = [
@@ -69,11 +75,33 @@ const loadingTasks = [
     scale: { x: 1.25, y: 1.25, z: 1.25 },
     rotation: { x: 0, y: 3.1, z: 0 },
   }),
-  // loadOBJ(scene, "/brisalec.obj", "Brisalec", {
-  //   position: { x: 0.6, y: 2, z: -1.1 },
-  //   scale: { x: 1, y: 1, z: 1 },
-  //   rotation: { x: -0.2, y: -0.5, z: 5 },
-  // }),
+  loadOBJ(scene, "/brisalec.obj", "Brisalec", {
+    position: { x: 0.6, y: 2, z: -1.1 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: -0.3, y: -0.5, z: 5 },
+  }).then((wiper) => {
+    wipers.push(wiper);
+  }),
+  loadOBJ(scene, "/brisalec.obj", "Brisalec", {
+    position: { x: 0.6, y: 2, z: -0.2 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: -0.3, y: -0.5, z: 5 },
+  }).then((wiper) => {
+    wipers.push(wiper);
+  }),
+  loadOBJ(scene, "/telefon.obj", "Telefon", {
+    position: { x: 0.0, y: 1.98, z: -0.5 },
+    scale: { x: 0.7, y: 0.7, z: 0.7 },
+    rotation: { x: 6, y: 5.5, z: 7.2 },
+  }).then((obj) => {
+    phone = obj;
+    // Find the screen of the phone by traversing its children
+    phone.children.forEach(child => {
+      if (child.name.toLowerCase().includes("screen")) {  // Adjust according to your model structure
+        phoneScreen = child;
+      }
+    });
+  }),
 ];
 
 Promise.all(loadingTasks).then(() => {
@@ -86,6 +114,10 @@ Promise.all(loadingTasks).then(() => {
 function animate() {
   stats.begin();
   animateRain(rainParticles, model_car, scene, droplets);
+  // animate wipers
+  animateWiper(wipers, "slow");
+  // change screen color
+  screenColor(phoneScreen, "slow");
   renderer.render(scene, camera);
   controls.update();
   stats.end();
@@ -104,4 +136,3 @@ window.addEventListener("keydown", (event) => {
     console.log("Picture taken from cameraPlayer");
   }
 });
-
