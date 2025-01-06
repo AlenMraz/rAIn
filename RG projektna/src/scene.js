@@ -11,7 +11,7 @@ function initScene() {
 
   // Scene Setup
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x766666);
+  scene.background = new THREE.Color(0x766676);
   // Camera Setup
   const camera = new THREE.PerspectiveCamera(
     75,

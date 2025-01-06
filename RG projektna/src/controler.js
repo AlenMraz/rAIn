@@ -2,6 +2,8 @@ import { takePictureFromCamera } from "./camera";
 import { compressImage } from "./compress";
 import { animateWiper } from "./wiperAnimation.js";
 import { screenColor } from "./screen.js";
+import { sendImage } from "./net";
+
 function removeAllDroplets(scene) {
     scene.children
       .filter((child) => child.name === "Droplet") 
@@ -16,12 +18,14 @@ async function Controler(camera, renderer, scene, wipers, phoneScreen) {
 
   while (true) {
     const capturedImage = takePictureFromCamera(camera, renderer, scene);
+    console.log('Captured image:');
+    //sendImage(capturedImage);
     //console.log('Droplets:', countAllDroplets(scene));
     removeAllDroplets(scene);
     //const compressedImage = compressImage(capturedImage);
 
-    // const classification = await sendImage(compressedImage);
-    const classification = "high";
+     const classification = await sendImage(capturedImage);
+    //const classification = "high";
 
     if (classification) {
         // console.log('Classification:', classification);
@@ -32,7 +36,7 @@ async function Controler(camera, renderer, scene, wipers, phoneScreen) {
         console.warn('Failed to get classification');
     }
 
-    await delay(1000);
+    await delay(8000);
   }
 }
 function animateWipersInLoop(wipers, classification) {

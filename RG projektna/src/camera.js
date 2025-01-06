@@ -1,5 +1,6 @@
 import * as THREE from "three";
 
+
 function countAllDroplets(scene) {
     return scene.children.filter((child) => child.name === "Droplet").length;
 }
@@ -29,15 +30,16 @@ function takePictureFromCamera(cameraToCapture, renderer, scene) {
 
     // Create a link to download the image
     // For AI model samples
-    // const link = document.createElement("a");
-    // link.href = imageData;
-    // link.download = `${timestamp}_${classification}.png`;
-    // link.click();
+     //const link = document.createElement("a");
+     //link.href = imageData;
+    //link.download = `${timestamp}_${classification}.png`;
+    //link.click();
 
     renderer.setSize(originalWidth, originalHeight);
     cameraToCapture.aspect = originalWidth / originalHeight; 
     cameraToCapture.updateProjectionMatrix();   
-
+    
+    console.log('Droplets:', dropletsCount);
     return imageData;
 }
 

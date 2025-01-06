@@ -1,7 +1,7 @@
 // Define speed levels
 const rainIntensity = {
-  low: "yellow",   // Slow speed (quarter of a full rotation per second)
-  medium: "orange", // Normal speed (half of a full rotation per second)
+  drizzle: "yellow",   // Slow speed (quarter of a full rotation per second)
+  mid: "orange", // Normal speed (half of a full rotation per second)
   high: "red",     // Faster speed (full rotation per second)
   not: "green",          // No movement
 };
