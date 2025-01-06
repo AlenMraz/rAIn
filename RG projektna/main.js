@@ -93,9 +93,9 @@ const loadingTasks = [
     wipers.push(wiper);
   }),
   loadOBJ(scene, "/telefon.obj", "Telefon", {
-    position: { x: 0.0, y: 1.98, z: -0.5 },
+    position: { x: 0.2, y: 1.8, z: -0.4 },
     scale: { x: 0.7, y: 0.7, z: 0.7 },
-    rotation: { x: 6, y: 5.5, z: 7.2 },
+    rotation: { x: 0, y: 0, z: 1.2 },
   }).then((obj) => {
     phone = obj;
     // Find the screen of the phone by traversing its children

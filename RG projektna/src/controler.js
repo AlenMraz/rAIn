@@ -26,6 +26,7 @@ async function Controler(camera, renderer, scene, wipers, phoneScreen) {
     if (classification) {
         //TODO: implement da se brisalec premakne in odstrani kapljice
         console.log('Classification:', classification);
+        
         animateWiper(wipers, classification);
         screenColor(phoneScreen, classification);
     } else {
