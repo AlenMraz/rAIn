@@ -24,8 +24,7 @@ async function Controler(camera, renderer, scene, wipers, phoneScreen) {
     const classification = "high";
 
     if (classification) {
-        //TODO: implement da se brisalec premakne in odstrani kapljice
-        console.log('Classification:', classification);
+        // console.log('Classification:', classification);
         
         animateWipersInLoop(wipers, classification);
         screenColor(phoneScreen, classification);
