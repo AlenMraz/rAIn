@@ -78,6 +78,11 @@ const loadingTasks = [
     scale: { x: 1.25, y: 1.25, z: 1.25 },
     rotation: { x: 0, y: 3.1, z: 0 },
   }),
+  loadOBJ(scene, "/menjalnik.obj", "Menjalnik", {
+    position: { x: -0.3, y: 1.8, z: -0.55 },
+    scale: { x: 0.025, y: 0.025, z: 0.025 },
+    rotation: { x: 0, y: 0, z: 0 },
+  }),
   loadOBJ(scene, "/brisalec.obj", "Brisalec", {
     position: { x: 0.6, y: 2, z: -1.1 },
     scale: { x: 1, y: 1, z: 1 },

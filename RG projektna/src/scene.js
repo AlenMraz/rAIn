@@ -20,7 +20,7 @@ function initScene() {
     1000
   );
   camera.position.set(-1.25, 2.5, -1);
-  camera.lookAt(new THREE.Vector3(3, 3, 0));
+  camera.lookAt(new THREE.Vector3(3, 2.5, 0));
   scene.add(camera);
   
   const cameraCamera = new THREE.PerspectiveCamera(
