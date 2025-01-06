@@ -27,7 +27,7 @@ async function Controler(camera, renderer, scene, wipers, phoneScreen) {
         //TODO: implement da se brisalec premakne in odstrani kapljice
         console.log('Classification:', classification);
         
-        animateWiper(wipers, classification);
+        animateWipersInLoop(wipers, classification);
         screenColor(phoneScreen, classification);
     } else {
         console.warn('Failed to get classification');
@@ -36,4 +36,12 @@ async function Controler(camera, renderer, scene, wipers, phoneScreen) {
     await delay(1000);
   }
 }
+function animateWipersInLoop(wipers, classification) {
+  function loop() {
+    animateWiper(wipers, classification);
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
 export { Controler };
