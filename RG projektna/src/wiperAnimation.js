@@ -1,12 +1,13 @@
 // Define speed levels
 const speedLevels = {
-  slow: Math.PI / 4,   // Slow speed (quarter of a full rotation per second)
-  normal: Math.PI / 2, // Normal speed (half of a full rotation per second)
-  fast: Math.PI,     // Faster speed (full rotation per second)
-  stopped: 0,          // No movement
+  low: Math.PI / 4,   // Slow speed (quarter of a full rotation per second)
+  medium: Math.PI / 2, // Normal speed (half of a full rotation per second)
+  high: Math.PI,     // Faster speed (full rotation per second)
+  not: 0,          // No movement
 };
 
 function animateWiper(wipers, speedSetting) {
+  console.log('Speed setting:', speedSetting);
   // Get the speed based on the selected setting
   const speed = speedLevels[speedSetting] || speedLevels.stopped; // Default to stopped
   

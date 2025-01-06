@@ -1,12 +1,13 @@
 import GUI from "three/addons/libs/lil-gui.module.min.js";
 import { loadGLTF, loadOBJ } from "./src/loaders.js";
 import { animateRain } from "./src/rainAnimation.js";
-import { animateWiper } from "./src/wiperAnimation.js";
+// import { animateWiper } from "./src/wiperAnimation.js";
 import { initScene } from "./src/scene.js";
 import { initRain } from "./src/rain.js";
 import { takePictureFromCamera } from "./src/camera.js";
 import { Controler } from "./src/controler.js";
-import { screenColor } from "./src/screen.js";
+// import { screenColor } from "./src/screen.js";
+// import { classification } from "./src/classification.js";
 import { startMQTTClient } from "./src/mqtt.js";
 // Scene Initialization
 const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
@@ -23,6 +24,7 @@ let rainCount = 1000; // Default rain count
 let rainSettings = { count: rainCount };
 let droplets = [];
 let wipers = [];
+let classification = "not";
 
 
 function updateRain(newCount) {
@@ -37,13 +39,14 @@ function updateRain(newCount) {
 
 const { rain } = initRain(scene, rainCount);
 rainParticles = rain;
+let rainValue;
 
 // GUI Setup
 const gui = new GUI({ width: 500 });
 gui.add(rainSettings, "count", 0, 5000, 100) // Slider for rain count
   .name("Rain Count")
-  .onChange((value) => {
-    updateRain(Math.round(value));
+  .onChange((rainValue) => {
+    updateRain(Math.round(rainValue));
   });
 
 // Loaders and Model Setup
@@ -107,17 +110,13 @@ const loadingTasks = [
 Promise.all(loadingTasks).then(() => {
   console.log("All objects loaded, starting animation loop");
   renderer.setAnimationLoop(animate);
-  Controler(cameraCamera, renderer, scene, model_car);
+  Controler(cameraCamera, renderer, scene, wipers, phoneScreen);
 });
 
 // Animation Loop
 function animate() {
   stats.begin();
   animateRain(rainParticles, model_car, scene, droplets);
-  // animate wipers
-  animateWiper(wipers, "slow");
-  // change screen color
-  screenColor(phoneScreen, "slow");
   renderer.render(scene, camera);
   controls.update();
   stats.end();
@@ -132,7 +131,9 @@ window.addEventListener("resize", () => {
 // Capture Image Event
 window.addEventListener("keydown", (event) => {
   if (event.key === "C" || event.key === "c") {
-    const capturedImage = takePictureFromCamera(cameraCamera, renderer, scene);
+    const { capturedImage, newClassification } = takePictureFromCamera(cameraCamera, renderer, scene);
     console.log("Picture taken from cameraPlayer");
+    classification = newClassification;
+    console.log("Rain intensity classification:", classification);
   }
 });

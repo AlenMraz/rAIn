@@ -1,5 +1,7 @@
 import { takePictureFromCamera } from "./camera";
 import { compressImage } from "./compress";
+import { animateWiper } from "./wiperAnimation.js";
+import { screenColor } from "./screen.js";
 function removeAllDroplets(scene) {
     scene.children
       .filter((child) => child.name === "Droplet") 
@@ -7,7 +9,7 @@ function removeAllDroplets(scene) {
   }
 
   
-async function Controler(camera, renderer, scene, object) {
+async function Controler(camera, renderer, scene, wipers, phoneScreen) {
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -19,13 +21,16 @@ async function Controler(camera, renderer, scene, object) {
     //const compressedImage = compressImage(capturedImage);
 
     // const classification = await sendImage(compressedImage);
+    const classification = "high";
 
-    // if (classification) {
-    //     //TODO: implement da se brisalec premakne in odstrani kapljice
-    //     console.log('Classification:', classification);
-    // } else {
-    //     console.warn('Failed to get classification');
-    // }
+    if (classification) {
+        //TODO: implement da se brisalec premakne in odstrani kapljice
+        console.log('Classification:', classification);
+        animateWiper(wipers, classification);
+        screenColor(phoneScreen, classification);
+    } else {
+        console.warn('Failed to get classification');
+    }
 
     await delay(1000);
   }

@@ -1,9 +1,9 @@
 // Define speed levels
 const rainIntensity = {
-  slow: "yellow",   // Slow speed (quarter of a full rotation per second)
-  normal: "orange", // Normal speed (half of a full rotation per second)
-  fast: "red",     // Faster speed (full rotation per second)
-  stopped: "green",          // No movement
+  low: "yellow",   // Slow speed (quarter of a full rotation per second)
+  medium: "orange", // Normal speed (half of a full rotation per second)
+  high: "red",     // Faster speed (full rotation per second)
+  not: "green",          // No movement
 };
 
 function screenColor(screen, intensity) {
