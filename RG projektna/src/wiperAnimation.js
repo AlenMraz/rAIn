@@ -9,7 +9,7 @@ const speedLevels = {
 function animateWiper(wipers, speedSetting) {
   console.log('Speed setting:', speedSetting);
   // Get the speed based on the selected setting
-  const speed = speedLevels[speedSetting] || speedLevels.stopped; // Default to stopped
+  const speed = speedLevels[speedSetting] || speedLevels.not; // Default to stopped
   
   // Loop through all wipers in the scene
   wipers.forEach((wiper) => {
