@@ -6,9 +6,9 @@ import { initScene } from "./src/scene.js";
 import { initRain } from "./src/rain.js";
 import { takePictureFromCamera } from "./src/camera.js";
 import { Controler } from "./src/controler.js";
-// import { screenColor } from "./src/screen.js";
 // import { classification } from "./src/classification.js";
 import { startMQTTClient } from "./src/mqtt.js";
+import { Text } from "troika-three-text";
 // Scene Initialization
 const { scene, camera, cameraCamera, renderer, stats, controls } = initScene();
 
@@ -107,6 +107,25 @@ const loadingTasks = [
     phone.children.forEach(child => {
       if (child.name.toLowerCase().includes("screen")) {  // Adjust according to your model structure
         phoneScreen = child;
+
+        // Create the text mesh for the screen
+        const textMesh = new Text();
+        textMesh.isTextMesh = true; // Custom property to identify it later
+        textMesh.fontSize = 0.1; // Adjust the font size
+        textMesh.color = "white"; // Text color
+        textMesh.anchorX = "center"; // Center horizontally
+        textMesh.anchorY = "middle"; // Center vertically
+        textMesh.position.set(0, 0.1, -0.03); // Slight offset to avoid overlapping the screen
+
+        // Apply rotation and mirroring
+        textMesh.rotation.x = Math.PI/2;  // Rotate text 90 degrees around the X-axis
+        textMesh.rotation.y = 0;      // Rotate text 180 degrees around the Y-axis (for flipping)
+        textMesh.rotation.z = Math.PI/2;
+        textMesh.scale.set(1, -1, 1);       // Mirror the text along the X-axis (flip horizontally)
+        phoneScreen.add(textMesh); // Add text to the screen
+  
+        // Store the textMesh reference to update it later
+        phoneScreen.textMesh = textMesh;
       }
     });
   }),

@@ -3,7 +3,8 @@
     "mqtt": "^5.10.3",
     "paho-mqtt": "^1.1.0",
     "stats.js": "^0.17.0",
-    "three": "^0.171.0"
+    "three": "^0.171.0",
+    "troika-three-text": "^0.52.3"
   },
   "devDependencies": {
     "vite": "^6.0.6"

@@ -20,10 +20,10 @@ function removeAllDroplets(scene) {
     };
 
     const classificationLabels = {
-        "not": "No Rain",
-        "drizzle": "Drizzle",
-        "mid": "Medium rain intensity",
-        "high": "High rain intensity",
+        "not": "N: No Rain",
+        "drizzle": " L: Low rain intensity",
+        "mid": "M: Medium rain intensity",
+        "high": "H High rain intensity",
     };
 
     // Create a container for the image and classification box

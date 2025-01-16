@@ -1,18 +1,27 @@
-// Define speed levels
-const rainIntensity = {
-  drizzle: "yellow",   // Slow speed (quarter of a full rotation per second)
-  mid: "orange", // Normal speed (half of a full rotation per second)
-  high: "red",     // Faster speed (full rotation per second)
-  not: "green",          // No movement
-};
+function screenColor(screen, intensity, camera) {
+  // Define colors and text for the classification
+  const rainIntensity = {
+    not: { color: "green", text: "N" },
+    drizzle: { color: "yellow", text: "L" },
+    mid: { color: "orange", text: "M" },
+    high: { color: "red", text: "H" },
+  };
 
-function screenColor(screen, intensity) {
-  // Check if the screen object has a valid material
-  if (rainIntensity[intensity]) {
-    screen.material.color.set(rainIntensity[intensity]);
+  const intensityData = rainIntensity[intensity];
+  if (intensityData) {
+    // Update screen color
+    screen.material.color.set(intensityData.color);
+
+    // Update the text on the screen
+    if (screen.textMesh) {
+      screen.textMesh.text = intensityData.text; // Update text mesh
+      screen.textMesh.sync();  // Sync the text mesh to render the updated text
+    }
   } else {
     console.warn("Invalid intensity level:", intensity);
   }
 }
 
+
+// Export the function
 export { screenColor };

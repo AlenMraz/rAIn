@@ -43,7 +43,7 @@ RAINSTATUS = Gauge('rain_status', 'Rain status')
 CHANGES = Counter('changes', 'Changes')
 HEAVY_RAIN = Counter('heavy_rain', 'Heavy rain')
 last_detection = "not"
-start_http_server(5000)
+# start_http_server(5000)
 app = Flask(__name__)
 classes = {0:'not', 1:'drizzle', 2:'mid', 3:'high'}
 clf = RainIdentifier().to('cpu')
