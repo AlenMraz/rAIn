@@ -1,0 +1,371 @@
+import math
+import os
+from PIL import Image
+import numpy as np
+import string 
+import time
+
+
+def load_image(path):
+    image = Image.open(path)
+    image = np.array(image)
+    #print(image)
+    return image
+
+
+def set_header(B,X, c0, cLast, n):
+    XTmp = bin(X)[2:].zfill(16)
+    B.append(XTmp)
+
+    c0Tmp = bin(c0)[2:].zfill(8)
+    B.append(c0Tmp)
+
+    cLastTmp = bin(cLast)[2:].zfill(32)
+    B.append(cLastTmp)
+
+    nTmp = bin(n)[2:].zfill(32)
+    B.append(nTmp)
+
+    return B
+
+
+def compress(P, X, Y):
+    P = P.astype(np.int32)
+    E = predict(P, X, Y)
+    n = X * Y
+
+    #N
+    N = [0] * n
+    N[0] = E[0]
+    for i in range(1, n):
+        if E[i] >= 0:
+            N[i] = 2 * E[i]
+        else:
+            N[i] = 2 * abs(E[i]) - 1
+    #print("N")
+    #print(N)
+    
+    #C
+    C = [0] * n
+    C[0] = N[0]
+    for i in range(1, n):
+        C[i] = C[i - 1] + N[i]
+    #print("c")
+    #print(C)
+
+    # header
+    B = []
+    set_header(B,X, C[0], C[-1], n)
+    #print("B")
+    #print(B)
+    
+    
+    ic(B, C, 0, n - 1)
+    #print(ic(B, C, 0, n - 1))
+    B = ''.join(B)
+    
+    return B
+
+def predict(P, Y, X):
+    E =np.zeros_like(P, dtype=int)
+    E = E.flatten()
+    for x in range( X):
+        
+        for y in range (Y):
+
+            if x == 0 and y == 0:
+                 E[y * X + x] = P[0,0]
+
+            elif y == 0:
+                E[y * X + x] = P[x-1,0] - P[x,0]
+
+            elif x == 0:
+                E[y * X + x] = P[0,y-1] - P[0,y]
+
+            else:
+                
+                p_left = P[x, y - 1]   
+                p_top = P[x - 1, y]     
+                p_tl = P[x - 1, y - 1] 
+
+                if p_tl >= max(p_left, p_top):
+                    E[y * X + x] = min(p_left, p_top)-P[x,y]
+                elif p_tl <= min(p_left, p_top):
+                    E[y * X + x] = max(p_left, p_top)-P[x,y]
+                else:
+                    E[y * X + x] = p_left + p_top - p_tl-P[x,y]
+    #print("E")                
+    #print(E)
+    return E
+
+def ic(B, C, L, H):
+    if H - L > 1:
+        cH = C[H]
+        cL = C[L]
+       
+        #print(B)
+       
+        if cH != cL:
+            m = math.floor(0.5 * (H + L))
+            
+            g = math.ceil(math.log2(cH - cL + 1))
+            
+            encode(B, g, C[m] - cL)
+            
+            if L < m:
+                ic(B, C, L, m)
+            if m < H:
+                ic(B, C, m, H)
+    return B
+    
+def encode(B, g, val):
+    
+    
+    val2 =bin(val)[2:]
+    if len(val2) != g:
+        val2 = val2.zfill(g)
+        B.append(val2)
+
+    else: 
+        B.append(val2)
+    #print("B")
+    #print(B)
+    #print("val")
+    #print(val)
+
+
+def decompress(B):
+    #print(B)
+    
+    BHeader = B[:88]
+    #decode_header(BHeader)
+    X,  c0, cLast,n = decode_header(BHeader)
+    
+    Y = n // X
+    
+    C = initialise_c(n, c0, cLast)
+    
+    #print("n")
+    #print(n)
+    BD = B[88:]
+    BD = list(BD)
+    de_ic(BD, C, 0, n - 1)
+    
+    
+    N0 = C[0]
+    N = [0] * n
+    for i in range(1, n):
+        N[i] = C[i] - C[i - 1]
+    #print("N")
+    #print(N)
+    E0 = N0
+    E = [0] * n
+    E[0] = E0
+    
+    for i in range(1, n):
+        if N[i] % 2 == 0:
+            E[i] = N[i] // 2
+        else:
+            E[i] = -(N[i] + 1) // 2
+
+    #print("E")
+    #print(E)
+    
+    P = predict_inverse(E, X, Y)
+    #print("P")
+    #print(P)
+    
+    return P
+    return
+    
+
+def decode_header(B):
+    XTmp = B[:16]
+    c0Tmp = B[16:24]
+    cLastTmp = B[24:56]
+    nTmp = B[56:] 
+
+    #print(B)
+    
+    Xa = int(XTmp, 2)
+    c0 = int(c0Tmp, 2)
+    cLast = int(cLastTmp, 2)
+    n = int(nTmp, 2)
+    print(" x ",Xa," c0 ", c0," cl ", cLast," n ", n)
+    return Xa, c0, cLast, n
+    
+
+def get_bits(B, g):
+    Btmp = B[:g]
+    return Btmp 
+
+def decode(B):
+    #print(B)
+    Bint = int(B, 2)
+    #print("B in decode")
+    #print(Bint)
+    
+    return int(B, 2) 
+
+def de_ic(B, C, L, H):
+    #print("b")
+    #print(B)
+    
+    
+    if H - L > 1:
+       # print("yes")
+        if C[L] == C[H]:
+            #print("yes1")
+            for i in range(L + 1, H):
+                C[i] = C[L]
+                
+                
+        else:
+            #print("yes2")
+            m = math.floor(0.5 * (H + L))
+            g = math.ceil(math.log2(C[H] - C[L] + 1))
+            #print(g)
+            
+            B_bits = get_bits(B, g)
+            B[:] = B[g:]
+            #print(len(B))
+            
+            Bstr = ''.join(B_bits)
+            #print(C[L])
+
+            C[m] = C[L] + decode(Bstr)
+            #print(C)
+            if L < m:
+                de_ic(B, C, L, m)
+
+            if m < H:
+                de_ic(B, C, m, H)  
+        
+
+
+
+def initialise_c(n, c0, cLast):
+    C = [0] * n
+    C[0] = c0
+    C[n-1] = cLast
+    return C
+
+
+
+def predict_inverse(E, Y, X):
+    P = np.zeros((X, Y), dtype=int)
+    
+    for x in range( X):
+        
+        for y in range (Y):
+
+            if x == 0 and y == 0:
+                P[0,0] = E[y * X + x]  
+
+            elif y == 0:
+              P[x,0] = P[x-1,0]- E[y * X + x]  
+
+            elif x == 0:
+               P[0,y] = P[0,y-1] - E[y * X + x]
+
+            else:
+                
+                p_left = P[x, y - 1]   
+                p_top = P[x - 1, y]     
+                p_tl = P[x - 1, y - 1] 
+
+                if p_tl >= max(p_left, p_top):
+                   P[x,y]  = min(p_left, p_top)-E[y * X + x]
+                elif p_tl <= min(p_left, p_top):
+                   P[x,y]  = max(p_left, p_top)-E[y * X + x]
+                else:
+                   P[x,y]  = p_left + p_top - p_tl-E[y * X + x]
+    #print("E")                
+    #print(E)
+    return P
+
+def save_binary_file(file_name, data):
+    with open(file_name, 'wb') as f:
+        if isinstance(data, list):
+            data = bytes(data)
+        f.write(data)
+
+def bytes_to_binary_string(byte_data):
+    return ''.join(f"{byte:08b}" for byte in byte_data)
+
+def array_to_bmp(arr, output_path):
+   
+    arr = np.array(arr, dtype=np.uint8)
+    image = Image.fromarray(arr)
+
+    image.save(output_path)
+
+
+   
+def main():
+    image2 = np.array([
+        
+        [23, 24, 25, 26, 27],
+        [28, 29, 30, 31, 32],
+        [33, 34, 35, 36, 37],
+        [38, 39, 40, 41, 42]
+    ])
+    """
+    image = np.array([
+        
+        [23, 21, 21, 23, 23],
+        [24, 22, 22, 20, 24],
+        [23, 22, 22, 19, 23],
+        [26, 25, 21, 19, 22]
+    ])
+    """
+    start_time = time.perf_counter()
+        
+    image = load_image("./slike/Board.bmp")
+    height, width = image.shape
+    print("height",height)
+    print("width",width)
+    
+    B=compress(image, width, height)
+    B = "1" + B
+    #print(B)
+   
+    byte_data = int(B, 2).to_bytes((len(B) + 7) // 8, byteorder='big')
+    #print(f"Number of bytes: {len(byte_data)}")
+    save_binary_file("test.bin", byte_data)
+
+    end_time = time.perf_counter()
+    print(f"Compression time: {end_time - start_time} seconds")
+    
+
+  
+    """
+    """
+    start_time2 = time.perf_counter()
+
+    # Decompress the data/open file
+    byte_data2 = open("test.bin", "rb").read()
+    
+    binary_string = bytes_to_binary_string(byte_data2)
+    binary_string = binary_string.lstrip('0')
+    binary_string = binary_string[1:]
+    #print(f"Binary string: {binary_string}")
+    arr = decompress(binary_string)
+    array_to_bmp(arr, 'test.bmp')
+
+    end_time2 = time.perf_counter()
+    print(f"Decompression time: {end_time2 - start_time2} seconds")
+
+    
+    """
+    B = []
+    g = 4  
+    values = [5, 3, 12] 
+    for val in values:
+        encode(B, g, val)
+    print(B)
+    """
+
+
+if __name__ == "__main__":
+    main()
