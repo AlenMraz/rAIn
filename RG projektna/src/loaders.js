@@ -5,6 +5,7 @@ import { applyTransformations } from './transformations.js';
 
 function loadGLTF(scene, url, options = {}) {
   return new Promise((resolve, reject) => {
+    const startTime = performance.now(); // Start tracking time
     const loader = new GLTFLoader();
     loader.load(
       url,
@@ -12,6 +13,9 @@ function loadGLTF(scene, url, options = {}) {
         const model = gltf.scene;
         applyTransformations(model, options);
         scene.add(model);
+        
+        const endTime = performance.now(); // End tracking time
+        console.log(`${url} loaded in ${(endTime - startTime)}ms`);
         resolve(model);
       },
       (xhr) => console.log(`${url}: ${(xhr.loaded / xhr.total) * 100}% loaded`),
@@ -25,6 +29,7 @@ function loadGLTF(scene, url, options = {}) {
 
 function loadOBJ(scene, url, name, options = {}) {
   return new Promise((resolve, reject) => {
+    const startTime = performance.now(); // Start tracking time
     const loader = new OBJLoader();
     loader.load(
       url,
@@ -32,7 +37,9 @@ function loadOBJ(scene, url, name, options = {}) {
         applyTransformations(object, options);
         object.name = name;
         scene.add(object);
-        console.log(`Successfully loaded ${url}`);
+        
+        const endTime = performance.now(); // End tracking time
+        console.log(`${url} loaded in ${(endTime - startTime)}ms`);
         resolve(object);
       },
       (xhr) => console.log(`${url}: ${(xhr.loaded / xhr.total) * 100}% loaded`),
@@ -46,6 +53,7 @@ function loadOBJ(scene, url, name, options = {}) {
 
 function loadOBJWithMTL(scene, objUrl, mtlUrl, name, options = {}) {
   return new Promise((resolve, reject) => {
+    const startTime = performance.now(); // Start tracking time
     const mtlLoader = new MTLLoader();
     mtlLoader.load(
       mtlUrl,
@@ -59,6 +67,8 @@ function loadOBJWithMTL(scene, objUrl, mtlUrl, name, options = {}) {
             applyTransformations(object, options);
             object.name = name;
             scene.add(object);
+            const endTime = performance.now(); // End tracking time
+            console.log(`${objUrl} with materials loaded in ${(endTime - startTime)}ms`);
             resolve(object);
           },
           (xhr) => console.log(`${objUrl}: ${(xhr.loaded / xhr.total) * 100}% loaded`),

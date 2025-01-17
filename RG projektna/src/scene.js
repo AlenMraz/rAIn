@@ -3,6 +3,10 @@ import Stats from "stats.js";
 import { initControls } from "./controls.js";
 import { initLighting } from "./lighting.js";
 
+// Nastavi fiksno resolucijo
+const width = window.innerWidth;  // Nastavi želeno širino
+const height = window.innerHeight;  // Nastavi želeno višino
+
 function initScene() {
   // Initialize Stats Panel
   const stats = new Stats();
@@ -15,7 +19,7 @@ function initScene() {
   // Camera Setup
   const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    width / height,
     0.1,
     1000
   );
@@ -25,7 +29,7 @@ function initScene() {
   
   const cameraCamera = new THREE.PerspectiveCamera(
     100,
-    window.innerWidth / window.innerHeight,
+    width / height,
     0.1,
     1000
   );
@@ -35,9 +39,9 @@ function initScene() {
 
   // Renderer Setup
   const renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
   document.body.appendChild(renderer.domElement);
-  //console.log(window.innerWidth, window.innerHeight)
+  //console.log(width, height)
   // Lighting Setup
   initLighting(scene);
   // Pointer Lock Controls

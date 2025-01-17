@@ -84,14 +84,14 @@ const loadingTasks = [
     rotation: { x: 0, y: 0, z: 0 },
   }),
   loadOBJ(scene, "/brisalec.obj", "Brisalec", {
-    position: { x: 0.6, y: 2, z: -1.1 },
+    position: { x: 0.9, y: 2, z: -1.1 },
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: -0.3, y: -0.5, z: 5 },
   }).then((wiper) => {
     wipers.push(wiper);
   }),
   loadOBJ(scene, "/brisalec.obj", "Brisalec", {
-    position: { x: 0.6, y: 2, z: -0.2 },
+    position: { x: 0.9, y: 2, z: -0.2 },
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: -0.3, y: -0.5, z: 5 },
   }).then((wiper) => {
@@ -131,7 +131,14 @@ const loadingTasks = [
   }),
 ];
 
+// Track App Load Time
+const appStartTime = performance.now(); // Start timer for app loading
+
 Promise.all(loadingTasks).then(() => {
+  
+  const appEndTime = performance.now(); // End timer for app loading
+  console.log(`App loaded in ${(appEndTime - appStartTime)}ms`);
+
   console.log("All objects loaded, starting animation loop");
   renderer.setAnimationLoop(animate);
   Controler(cameraCamera, renderer, scene, wipers, phoneScreen);
