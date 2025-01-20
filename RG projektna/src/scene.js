@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { VRButton } from 'three/addons/webxr/VRButton.js';
 import Stats from "stats.js";
 import { initControls } from "./controls.js";
 import { initLighting } from "./lighting.js";
@@ -37,11 +38,16 @@ function initScene() {
   cameraCamera.lookAt(new THREE.Vector3(2.5, 4.4, -0.25));
   scene.add(cameraCamera);
 
+
   // Renderer Setup
   const renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
   renderer.setSize(width, height);
+  renderer.xr.enabled = true;
   document.body.appendChild(renderer.domElement);
-  //console.log(width, height)
+  
+  // VR setup
+  document.body.appendChild( VRButton.createButton( renderer ) );
+
   // Lighting Setup
   initLighting(scene);
   // Pointer Lock Controls
