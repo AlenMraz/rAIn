@@ -35,7 +35,7 @@ function initScene() {
     1000
   );
   cameraCamera.position.set(-0.5, 2, -0.25);
-  cameraCamera.lookAt(new THREE.Vector3(2.5, 4.4, -0.25));
+  cameraCamera.lookAt(new THREE.Vector3(2.5, 5.4, -0.25));
   scene.add(cameraCamera);
 
 

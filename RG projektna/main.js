@@ -1,5 +1,5 @@
 import GUI from "three/addons/libs/lil-gui.module.min.js";
-import { loadGLTF, loadOBJ } from "./src/loaders.js";
+import { loadGLTF, loadOBJ, loadOBJWithMTL } from "./src/loaders.js";
 import { animateRain } from "./src/rainAnimation.js";
 // import { animateWiper } from "./src/wiperAnimation.js";
 import { initScene } from "./src/scene.js";
@@ -56,48 +56,150 @@ let phoneScreen;
 
 // Track Loading Completion
 const loadingTasks = [
-  loadGLTF(scene, "/avto.glb", {
+  loadGLTF(scene, "/avto3.glb", {
     position: { x: 0, y: 1, z: 0 },
     scale: { x: 0.5, y: 0.5, z: 0.5 },
     rotation: { x: 0, y: 0, z: 0 },
   }).then((model) => {
     model_car = model;
   }),
-  loadOBJ(scene, "/Straight.obj", "Straight", {
+  loadOBJWithMTL(scene, "/straight1.obj","/straight1.mtl", "Straight", {
     position: { x: 0, y: 0, z: 0 },
-    scale: { x: 1, y: 1, z: 1 },
+    scale: { x: 2.75, y: 1.75, z: 1.75 },
     rotation: { x: 0, y: 0, z: 0 },
   }),
-    loadOBJ(scene, "/armaturna_plosca.obj", "armaturna_plosca", {
+  
+  loadOBJWithMTL(scene, "/armaturna_plosca1.obj","/armaturna_plosca1.mtl", "armaturna_plosca", {
     position: { x: 0, y: 1.75, z: -0.9 },
     scale: { x: 1.25, y: 1.25, z: 1.25 },
     rotation: { x: 0, y: 3.9, z: 0 },
   }),
-  loadOBJ(scene, "/RG-volan.obj", "volan", {
+  loadOBJWithMTL(scene, "/volan3.obj","volan3.mtl", "volan", {
     position: { x: -0.3, y: 1.9, z: -0.9 },
     scale: { x: 1.25, y: 1.25, z: 1.25 },
     rotation: { x: 0, y: 3.1, z: 0 },
   }),
-  loadOBJ(scene, "/menjalnik.obj", "Menjalnik", {
-    position: { x: -0.3, y: 1.8, z: -0.55 },
-    scale: { x: 0.025, y: 0.025, z: 0.025 },
+  
+  loadOBJWithMTL(scene, "/50.obj","50.mtl", "tree", {
+    position: { x: 3, y: 1, z: 4 },
+    scale: { x: 0.001, y: 0.001, z: 0.001 },
+    rotation: { x: 0, y: 4.0, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/tree.obj","tree.mtl", "tree", {
+    position: { x: 12, y: 1, z: 18 },
+    scale: { x: 0.3, y: 0.3, z: 0.3 },
+    rotation: { x: 0, y: 4.0, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/house1.obj","house1.mtl", "house", {
+    position: { x: 5, y: -1, z: 18 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: 0, y: -3.0, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/house2.obj","house2.mtl", "house", {
+    position: { x: 5, y: 3.5, z: -18 },
+    scale: { x: 0.7, y: 1, z: 1 },
+    rotation: { x: 0, y: 4.7, z: 0 },
+  }),
+  loadOBJWithMTL(scene, "/house2.obj","house2.mtl", "house", {
+    position: { x: -25, y: 0.5, z: -18 },
+    scale: { x: 0.7, y: 1, z: 1 },
+    rotation: { x: 0, y: 4.7, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/house2.obj","house3.mtl", "house", {
+    position: { x: -5, y: 3, z: -18 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: 0, y: 4.7, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/house2.obj","house3.mtl", "house", {
+    position: { x: -5, y: 3, z: 18 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: 0, y: -4.7, z: 0 },
+  }),
+  loadOBJWithMTL(scene, "/house2.obj","house3.mtl", "house", {
+    position: { x: 50, y: 0, z: 18 },
+    scale: { x: 0.3, y: 0.3, z: 0.3 },
+    rotation: { x: 0, y: -4.7, z: 0 },
+  }),
+
+
+  loadOBJWithMTL(scene, "/tree.obj","tree.mtl", "tree", {
+    position: { x: 12, y: 1, z: 18 },
+    scale: { x: 0.3, y: 0.3, z: 0.3 },
+    rotation: { x: 0, y: 4.0, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/kanta.obj","kanta.mtl", "tree", {
+    position: { x: 12, y: 1, z: -10 },
+    scale: { x: 1, y: 1, z: 1 },
+    rotation: { x: 0, y: 4.0, z: 0 },
+  }),
+  
+
+  loadOBJWithMTL(scene, "/tree.obj","tree.mtl", "znak", {
+    position: { x: 0, y: 1, z: -20 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+    rotation: { x: 0, y: 4.0, z: 0 },
+  }),
+  loadOBJWithMTL(scene, "/tree.obj","tree.mtl", "znak", {
+    position: { x: -10, y: 1, z: -16 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+    rotation: { x: 0, y: 4.0, z: 0 },
+  }),
+
+
+  loadOBJWithMTL(scene, "/brush.obj","/brush.mtl", "brush", {
+    position: { x: 1, y: 1, z: 9 },
+    scale: { x: 2, y: 1.5, z: 2 },
+    rotation: { x: 0, y: 3.1, z: 0 },
+  }),
+
+
+  loadOBJWithMTL(scene, "/grass_flat.obj","/grass_flat.mtl", "grass", {
+    position: { x: 1, y: -0.2, z: 9 },
+    scale: { x: 5, y: 1.0, z: 5 },
+    rotation: { x: 0, y: 3.1, z: 0 },
+  }),
+
+  loadOBJWithMTL(scene, "/avtomobil2.obj","avtomobil1.mtl", "avtomobil", {
+    position: { x: 30, y: 0.5, z: -1.5},
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+    rotation: { x: 0, y: 3.1, z: 0 },
+  }),
+  loadOBJWithMTL(scene, "/avtomobil2.obj","/avtomobil2.mtl", "avtomobil", {
+    position: { x: 60, y: 0.5, z: -0},
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+    rotation: { x: 0, y: 3.1, z: 0 },
+  }),
+  loadOBJWithMTL(scene, "/avtomobil2.obj","/avtomobil2.mtl", "avtomobil", {
+    position: { x: 40, y: 0.2, z: 17},
+    scale: { x: 0.24, y: 0.3, z: 0.3 },
+    rotation: { x: 0, y: 1.1, z: 0 },
+  }),
+  loadOBJWithMTL(scene, "/menjalnik2.obj","/menjalnik2.mtl", "Menjalnik", {
+    position: { x: -0.6, y: 1.8, z: -0.55 },
+    scale: { x: 0.03, y: 0.03, z: 0.03 },
     rotation: { x: 0, y: 0, z: 0 },
   }),
-  loadOBJ(scene, "/brisalec.obj", "Brisalec", {
+  loadOBJWithMTL(scene, "/brisalec1.obj","/brisalec1.mtl", "Brisalec", {
     position: { x: 0.9, y: 2, z: -1.1 },
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: -0.3, y: -0.5, z: 5 },
   }).then((wiper) => {
     wipers.push(wiper);
   }),
-  loadOBJ(scene, "/brisalec.obj", "Brisalec", {
+  loadOBJWithMTL(scene, "/brisalec1.obj","/brisalec1.mtl", "Brisalec", {
     position: { x: 0.9, y: 2, z: -0.2 },
     scale: { x: 1, y: 1, z: 1 },
     rotation: { x: -0.3, y: -0.5, z: 5 },
   }).then((wiper) => {
     wipers.push(wiper);
   }),
-  loadOBJ(scene, "/telefon.obj", "Telefon", {
+  loadOBJWithMTL(scene, "/telefon1.obj","/telefon1.mtl", "Telefon", {
     position: { x: 0.2, y: 1.8, z: -0.4 },
     scale: { x: 0.7, y: 0.7, z: 0.7 },
     rotation: { x: 0, y: 0, z: 1.2 },
